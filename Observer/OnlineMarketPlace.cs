@@ -1,56 +1,59 @@
-﻿
-namespace Observer;
+﻿namespace Observer;
 
 class OnlineMarketPlace
 {
-    private List<User> users;
-    private List<Product> products;
-    private List<Offer> offers;
+    private Dictionary<EventType, List<ISubscribe>> _subscribers;
+    private List<Product> _products;
+    private List<Offer> _offers;
 
     public OnlineMarketPlace()
     {
-        this.users = [];
-        this.products = [];
-        this.offers = [];
+        this._subscribers = [];
+        InitSubscriberEvents();
+        this._products = [];
+        this._offers = [];
     }
 
-
-    public void AddUser(User user)
+    public void InitSubscriberEvents()
     {
-        users.Add(user);
+        _subscribers.Add(EventType.NEW_PRODUCT, []);
+        _subscribers.Add(EventType.NEW_OFFER, []);
+        _subscribers.Add(EventType.JOB_OPENING, []);
+    }
+
+    public void Subscribe(EventType eventType, ISubscribe subscribe)
+    {
+        _subscribers.GetValueOrDefault(eventType)!.Add(subscribe);
+    }
+
+    public void UnSubscribe(EventType eventType, ISubscribe subscribe)
+    {
+        _subscribers.GetValueOrDefault(eventType)!.Remove(subscribe);
     }
 
     public void AddNewProduct(Product product)
     {
-        products.Add(product);
-        NotifyUsers(product);
-    }
-
-    public void NotifyUsers(Product product)
-    {
-        foreach (var user in users)
-        {
-            if (!user.IsSubscribedToProducts)
-                continue;
-            else
-                user.Notify(product);
-        }
+        _products.Add(product);
+        NotifySubscribers(EventType.NEW_PRODUCT, 
+            $"New product is added {product.Name}");
     }
 
     public void AddNewOffer(Offer offer)
     {
-        offers.Add(offer);
-        NotifyUsers(offer);
+        _offers.Add(offer);
+        NotifySubscribers(EventType.NEW_OFFER,
+            $"New product is added {offer.Message}");
     }
 
-    public void NotifyUsers(Offer offer)
+    public void NotifySubscribers(EventType eventType, string message)
     {
-        foreach (var user in users)
-        {
-            if (!user.IsSubscribedToOffers)
-                continue;
 
-            user.Notify(offer);
+        if (_subscribers.TryGetValue(eventType, out var eventSubscribers))
+        {
+            foreach (var subscribe in eventSubscribers)
+            {
+                subscribe.Notify(message);
+            }
         }
     }
 }
