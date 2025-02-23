@@ -2,21 +2,15 @@
 
 class Checkout
 {
-    public void ProcessPayment(double amount, PaymentMehtod paymentMethod)
+    private readonly IPaymentStrategy _paymentStrategy;
+
+    public Checkout(IPaymentStrategy paymentStrategy)
     {
-        if (paymentMethod == PaymentMehtod.VISA_CARD)
-        {
-            Console.WriteLine("Processing payment of visa cards...");
-            Console.WriteLine("Calculating fees of the amount for visa card...");
-        }
-        else if (paymentMethod == PaymentMehtod.PAYPAL)
-        {
-            Console.WriteLine("Processing payment of paypal...");
-            Console.WriteLine("Calculating fees of the amount for paypal...");
-        }
-        else if (paymentMethod == PaymentMehtod.BANK_TRANSFER)
-        {
-            Console.WriteLine("Processing payment of bank transfer...");
-        }
+        _paymentStrategy = paymentStrategy;
+    }
+
+    public void ProcessPayment(double amount)
+    {
+        _paymentStrategy.ProcessPayment(amount);
     }
 }

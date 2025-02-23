@@ -1,32 +1,34 @@
 ﻿using Strategy;
+using System.Net.Http.Headers;
 
 class Program
 {
     static void Main()
     {
-        Product wallet = new Product("Wallet", 200.0);
-        double walletPrice = wallet
-            .CalculatePrice(MembershipType.REGULAR);
+        Product wallet = new Product
+            ("Wallet", 200.0 , new ReqularPricingStrategy());
+        double walletPrice = wallet.CalculatePrice();
 
         Console.WriteLine(walletPrice);
 
-        Product jacket = new Product("Jacket", 100.0);
-        double jacketPrice = jacket
-            .CalculatePrice(MembershipType.GOLD);
+        Product jacket = new Product
+            ("Jacket", 100.0, new GoldPricingStrategy());
+        double jacketPrice = jacket.CalculatePrice();
 
         Console.WriteLine(jacketPrice);
 
-        Product mobile = new Product("Mobile", 1000.0);
-        double mobilePrice = mobile
-            .CalculatePrice(MembershipType.PREMIUM);
+        Product mobile = new Product
+            ("Mobile", 1000.0, new PremiumPricingStrategy());
+        double mobilePrice = mobile.CalculatePrice();
         
         Console.WriteLine(mobilePrice);
 
 
-        Checkout checkout = new Checkout();
-
-        checkout.ProcessPayment(walletPrice, PaymentMehtod.VISA_CARD);
-        checkout.ProcessPayment(jacketPrice, PaymentMehtod.PAYPAL);
-        checkout.ProcessPayment(mobilePrice, PaymentMehtod.BANK_TRANSFER);
+        new Checkout(new VisaCardPaymentStrategy())
+            .ProcessPayment(walletPrice);
+        new Checkout(new PaypalPaymentStrategy())
+            .ProcessPayment(jacketPrice);
+        new Checkout(new BankTransferPaymentStrategy())
+            .ProcessPayment(mobilePrice);
     }
 }

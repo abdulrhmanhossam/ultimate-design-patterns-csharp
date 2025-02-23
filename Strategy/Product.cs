@@ -2,24 +2,19 @@
 
 class Product
 {
-    public Product(string name, double price)
+    private readonly IPricingStrategy _pricingStrategy;
+    public Product(string name, double price, IPricingStrategy pricingStrategy)
     {
         Name = name;
         Price = price;
+        _pricingStrategy = pricingStrategy;
     }
 
     public string Name { get; set; }
     public double Price { get; set; }
 
-    public double CalculatePrice(MembershipType membershipType)
+    public double CalculatePrice()
     {
-        if (membershipType == MembershipType.REGULAR)
-            return Price;
-        else if (membershipType == MembershipType.GOLD)
-            return Price * 0.9; // 10% discount
-        else if (membershipType == MembershipType.PREMIUM)
-            return Price * 0.8; // 20% discount
-
-        return Price;
+        return _pricingStrategy.CalculatePrice(Price);
     }
 }
