@@ -5,17 +5,20 @@ class Program
     static void Main()
     {
         TextEditor textEditor = new TextEditor();
+        History history = new History();
 
         textEditor.Content = "Hello, ";
-        textEditor.Save();
+        history.SaveHistoryState(textEditor.Save());
 
         textEditor.Content = "World!";
-        textEditor.Save();
+        history.SaveHistoryState(textEditor.Save());
 
         textEditor.Content = "Welcome to Design Pattern Course!";
-        textEditor.Undo();
-        textEditor.Undo();
-        textEditor.Redo();
+        history.SaveHistoryState(textEditor.Save());
+
+        textEditor.Content = "This should not be printed";
+        textEditor.Restore(history.Undo());
+        textEditor.Restore(history.Undo());
 
         Console.WriteLine(textEditor.Content);
     }

@@ -3,44 +3,19 @@
 class TextEditor
 {
     public string Content { get; set; }
-    private readonly Stack<string> _prevState;
-    private readonly Stack<string> _nextState;
 
     public TextEditor()
     {
         Content = "";
-        _prevState = [];
-        _nextState = [];
     }
 
-    public void Save()
+    public TextEditorState Save()
     {
-        _prevState.Push(Content);
-        _nextState.Clear();
+        return new TextEditorState(Content);
     }
 
-    public string Undo()
+    public void Restore(TextEditorState textEditorState)
     {
-        if (_prevState is not null)
-        {
-            _nextState.Push(Content);
-            Content = _prevState.Pop();
-
-            return Content;
-        }
-
-        return null!;
-    }
-
-    public string Redo()
-    {
-        if (_nextState is not null)
-        {
-            _prevState.Push(Content);
-            Content = _nextState.Pop();
-            return Content;
-        }
-
-        return null!;
+        Content = textEditorState.Content;
     }
 }
